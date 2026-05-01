@@ -1,0 +1,56 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Secrets and API Keys
+メモ帳/
+*.key
+*_keys.txt
+*_tokens.txt
+oauth2*
+api_keys*
+Grok*
+
+# Source Files with Secrets
+bep_post.py
+bep_post_v2.py
+stripe-payment-handler.php
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+debug.log
+
+# Cache
+.cache/
+*.cache
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Streamlit
+.streamlit/secrets.toml
