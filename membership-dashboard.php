@@ -46,8 +46,8 @@ function render_membership_dashboard() {
             <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 4px solid #667eea; margin-bottom: 20px;">
                 <p style="margin: 15px 0;">
                     <strong style="color: #667eea;">ツール URL：</strong><br/>
-                    <a href="https://www.ins-japan.com/members-site/" target="_blank" style="color: #667eea; text-decoration: none; word-break: break-all;">
-                        https://www.ins-japan.com/members-site/
+                    <a href="https://tubakido-byte-bep-post-generator-clean.streamlit.app/" target="_blank" style="color: #667eea; text-decoration: none; word-break: break-all;">
+                        https://tubakido-byte-bep-post-generator-clean.streamlit.app/
                     </a>
                 </p>
 

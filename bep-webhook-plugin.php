@@ -157,7 +157,7 @@ function bep_send_welcome_email($customer_email, $username, $password) {
 
         <h3 style="color: #667eea;">📱 アクセス情報</h3>
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
-            <p><strong>ツール URL：</strong> https://www.ins-japan.com/members-site/</p>
+            <p><strong>ツール URL：</strong> https://tubakido-byte-bep-post-generator-clean.streamlit.app/</p>
             <p><strong>ユーザーID：</strong> ' . esc_html($username) . '</p>
             <p><strong>パスワード：</strong> ' . esc_html($password) . '</p>
         </div>

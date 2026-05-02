@@ -13,7 +13,6 @@ import urllib.parse
 import os
 from dotenv import load_dotenv
 from app.auth import register_user, login_user, logout_user
-from app.payment import generate_paypay_qr, get_payment_status, mark_payment_pending
 from app.license_manager import check_license_status
 
 # 環境変数を読み込み
@@ -306,10 +305,12 @@ def translate_to_japanese(text: str) -> str:
             translated = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", text).strip()
             st.session_state.translation_cache[text] = translated
             return translated
-    except Exception:
-        pass
-
-    return text
+        else:
+            print(f"Translation API Error: {response.status_code} - {response.text}")
+            return text
+    except Exception as e:
+        print(f"Translation Error: {str(e)}")
+        return text
 
 
 def fetch_news(source: str) -> list:
@@ -352,7 +353,7 @@ if not license_status['can_access']:
     st.warning(f"⚠️ {license_status['locked_reason']}")
 
 # ── タブ分け ──────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs(["💭 短文投稿", "📰 ニュース投稿", "💳 支払い", "⚙️ プロフィール"])
+tab1, tab2, tab3 = st.tabs(["💭 短文投稿", "📰 ニュース投稿", "⚙️ プロフィール"])
 
 # ════════════════════════════════════════════════════════
 # TAB 1: 短文投稿（左右2カラム）
@@ -577,51 +578,9 @@ with tab2:
             st.info("投稿案がまだ生成されていません")
 
 # ════════════════════════════════════════════════════════
-# TAB 3: 支払い管理
+# TAB 3: プロフィール
 # ════════════════════════════════════════════════════════
 with tab3:
-    st.markdown("### 💳 サブスクリプション管理")
-
-    payment_status = get_payment_status(st.session_state.user_id)
-
-    if payment_status['is_active']:
-        st.success(f"✅ サブスクリプション有効")
-        st.markdown(f"**有効期限:** {payment_status['valid_until'].strftime('%Y年%m月%d日')}")
-        st.markdown(f"**残り日数:** {payment_status['days_remaining']} 日")
-
-        if payment_status['days_remaining'] <= 3:
-            st.warning(f"⚠️ 有効期限切れまで {payment_status['days_remaining']} 日です")
-    else:
-        st.error(f"❌ {payment_status['status'].upper()}")
-        st.markdown("---")
-
-        st.markdown("## PayPay で支払い")
-        st.markdown(f"**金額:** ¥3,000/月")
-        st.markdown(f"**支払い方法:** PayPay")
-
-        # PayPay QRコードを生成・表示
-        try:
-            qr_image = generate_paypay_qr(st.session_state.user_id)
-            if qr_image:
-                st.image(qr_image, caption=f"PayPay ID: {os.getenv('PAYPAY_ID')}", width=300)
-            else:
-                st.error("❌ QRコード生成に失敗しました")
-        except Exception as e:
-            st.error(f"❌ エラー: {str(e)}")
-
-        st.markdown("---")
-        st.markdown("**支払い手順:**")
-        st.markdown("1. 上の QR コードを PayPay アプリでスキャン")
-        st.markdown("2. 金額を確認して送金")
-        st.markdown("3. 確認ボタンをクリック（または 1 時間後に自動反映）")
-
-        if st.button("🔄 支払い確認を更新", use_container_width=True):
-            st.info("⏳ 支払い情報を確認中...\n\n注: 支払い確認は 1 時間ごとに自動で更新されます")
-
-# ════════════════════════════════════════════════════════
-# TAB 4: プロフィール
-# ════════════════════════════════════════════════════════
-with tab4:
     st.markdown("### ⚙️ プロフィール")
 
     st.markdown(f"**メールアドレス:** {st.session_state.email}")
@@ -643,24 +602,17 @@ with tab4:
         - 記事を選んで、あなたの意見を入力
         - AI が意見 + 記事をもとに 3 パターン生成
 
-        **TAB 3: 支払い**
-        - PayPay QR コードで月額 ¥3,000 を支払い
-        - 支払い確認後、翌月の最後の日までアクセス可能
-
-        **TAB 4: プロフィール**
+        **TAB 3: プロフィール**
         - アカウント情報の確認
         """)
 
     with st.expander("よくある質問"):
         st.markdown("""
         **Q: 投稿は実際に X に投稿される？**
-        A: はい。「📤 投稿」ボタンをクリックすると、即座に X に投稿されます。
+        A: はい。「📤 投稿」ボタンをクリックすると、即座に X に投稿されます.
 
-        **Q: 支払いはどのように確認される？**
-        A: PayPay で送金後、1 時間以内に自動的に確認されます。
-
-        **Q: 月の途中で登録した場合？**
-        A: その月の月末まで利用できます。翌月は 1 日から新しい支払いが必要です。
+        **Q: 何度でも生成できる？**
+        A: はい。生成回数に制限はありません。何度でも投稿案を生成して利用できます.
         """)
 
     st.markdown("---")
